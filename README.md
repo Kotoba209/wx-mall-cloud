@@ -14,13 +14,35 @@
 本次项目更改主要是把1~4的数据放在了云开发的数据库中存取。 地址列表， 由于数据量的庞大， 所以就不考虑要导入到云开发的数据库了， 想要做这步的 这里有数据 [cityDataArr.json](https://6c65-leeson-a5fee7-1257914072.tcb.qcloud.la/666/cityDataArr.json?sign=30a3c877aeb945f6b6e0419237fb126b&t=1541577824)， 至于创建订单， 视频中的老师说的是个人开发者没法实现，  只能企业才可以， 具体的我也没去细看，  所以这一步也就先使用的api工厂的
 
  **1. 搭建项目框架**
- 
+
  新建一个云开发项目框架， 并开通云开发模块， 新框架外层目录结构：
+
+
+
+
+
  ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200328224350515.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0tvdG9iYTIwOV8=,size_16,color_FFFFFF,t_70)
+
+
+
+
+
 把项目中我们用不到的文件都删了， （pages下面的文件基本都用不到， 所以可以都删了）
+
+
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200328233359905.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0tvdG9iYTIwOV8=,size_16,color_FFFFFF,t_70)
+
+
+
 **相应的app.json 文件夹里也要删掉对应的页面路径**
+
+
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200329000157104.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0tvdG9iYTIwOV8=,size_16,color_FFFFFF,t_70)
+
+
+
 一些页面上的全局配置， 可以从原项目中拷贝过来使用
 
  接下来需要安装一些依赖
@@ -28,22 +50,47 @@
 
 从官网上下载 [https://nodejs.org/en/](https://nodejs.org/en/)，安装之后，在cmd命令行中输入 node -v 出现版本号，说明安装成功
  - 初始化配置
-  在miniprogram右键在终端中打开，在终端输入npm init -y 然后回车
- 
+    在miniprogram右键在终端中打开，在终端输入npm init -y 然后回车
+
+
+
  ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200328224522407.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0tvdG9iYTIwOV8=,size_16,color_FFFFFF,t_70)
+
+
+
  初始化完成
+
+
+
  ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200328225029420.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0tvdG9iYTIwOV8=,size_16,color_FFFFFF,t_70)
+
+
+
  可以在项目目录中看到package.json文件
+
+
+
  ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200328225226519.png)
- 
+
+
+
  - 安装 apifm-wxapi
 
  npm是安装node之后有的， 但是下载挺慢的， 不介意可以继续使用， 也可以换成淘宝镜像或者 yarn
- 
+
  在刚才的终端继续输入 `npm install apifm-wxapi
 `安装完成之后， package.json会多出来这个东西
+
+
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200328230757100.png)
+
+
+
  具体使用就看代码里面的了。
+
+
+
 
 
 **2.数据导入**
@@ -55,17 +102,44 @@
 新建一个.json文件, 随便叫什么都可以， obj.json、arr.json...，然后把data一下的每个对象复制到刚才创建的.json文件中， 并去掉每个中括号之后的逗号，以vscode编辑器为例
 
 选中 然后ctrl + f：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200328231603470.png)
+
+
+
+
+
 接着ctrl + d 选中当前页面的所有 '    },  '
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200328231838675.png)
+
+
+
+
+
 替换全部， **分类列表和商品列表同理**
 
 替换前：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200328232028289.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0tvdG9iYTIwOV8=,size_16,color_FFFFFF,t_70)
+
+
+
+
+
 替换后：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200328232054109.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0tvdG9iYTIwOV8=,size_16,color_FFFFFF,t_70)
+
+
+
+
+
 然后到云开发数据库中建立相应的集合， 如轮播图就叫banners，然后在集合中点击导入，并选中你的json文件就可以了
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200328232232235.png)
+
+
 
 **商品详情则处理如下**：
 
@@ -74,15 +148,27 @@
 [https://api.it120.cc/kotoba/shop/goods/detail?id=266976](https://api.it120.cc/kotoba/shop/goods/detail?id=266976)
 
 这里存储到云开发数据库的时候， **建议把商品id放到最外层**， 这样比较容易处理，比如我的数据结构为：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200328233011621.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0tvdG9iYTIwOV8=,size_16,color_FFFFFF,t_70)
+
+
+
+
+
 商品数据只需要上面这些变量就够了， 其他的可以不需要添加。
 
 我的数据库集合：
 
+
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200328234333709.png)
+
 **3. 代码迁移**
+
 把需要用到的页面、组件或者图片图标的都复制到当前目录下面，  注意路径要保持和之前的一样，  这样就可以不用再另外处理了， 需要迁移的文件：
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/2020032823410888.png)
+
 这是迁移之后的项目结构， 具体可以在项目中查看
 
 **4. 接口替换**
