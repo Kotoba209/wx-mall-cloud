@@ -1,0 +1,44 @@
+<view class="pyg_index">
+  <!-- 搜索框 -->
+  <SearchInput></SearchInput>
+  <!-- 轮播图 -->
+  <view class="index_swiper">
+    <swiper circular="{{true}}" interval="3000" indicator-dots="{{true}}" autoplay="{{true}}">
+      <swiper-item wx:for="{{swiperList}}" wx:key="id">
+        <navigator url="{{item.navigator_url}}">
+          <image mode="widthFix" src="{{item.picUrl}}" />
+        </navigator>
+      </swiper-item>
+    </swiper>
+  </view>
+  <!-- 导航栏 -->
+  <view class="category-box">
+    <view wx:for="{{catesList}}" wx:key="goods_id" data-index="{{index}}" data-id="{{item.id}}" bindtap="handleToCategory">
+      <view class="category-list">
+        <view class="category-column">
+          <image mode="aspectFill" class="category-imgbox" src="{{item.icon}}"></image>
+          <view class="category-title">{{item.name}}</view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <!-- 商品信息 -->
+  <view class='space'></view>
+  <view class="weui-loadmore weui-loadmore_line">
+    <view class="weui-loadmore__tips weui-loadmore__tips_in-line">商品列表</view>
+  </view>
+  <view class="goods-container">
+    <navigator class="goods-box" wx:for="{{goodsList}}" wx:key="{{index}}" bindtap="toDetailsTap" data-id="{{item.id}}" url="/pages/goods_detail/index?id={{item.id}}">
+      <view class="img-box">
+        <image wx:if="{{item}}"  src="{{item.pic}}" class="image" mode="aspectFill" lazy-load="true" />
+      </view>
+      <view class="goods-title">{{item.name}}</view>
+      <view style='display:flex;'>
+        <view class="goods-price">¥ {{item.minPrice}}</view>
+        <view wx:if="{{item.originalPrice && item.originalPrice > 0}}" class="goods-price" style='color:#aaa;text-decoration:line-through'>
+          ¥ {{item.originalPrice}}
+        </view>
+      </view>
+    </navigator>
+  </view>
+</view>
