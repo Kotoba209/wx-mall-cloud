@@ -1,4 +1,4 @@
-> 前言： 关于云开发， 我只是花了一个上午的时间 简单的看了基础的数据库使用， 想要完全的去学一遍， 不花点时间是很难说可以掌握的。所以关于云开发，这里并不会讲太多， 想了解可以去啃文档 [微信云开发](https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html)
+> 前言： 关于云开发， 只是花了一个上午的时间 简单的看了基础的数据库使用， 想要完全的去学一遍， 不花点时间是很难说可以掌握的。所以关于云开发，这里并不会讲太多， 想了解可以去啃文档 [微信云开发](https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html)
 
 **本项目虽然大部分接口使用的是云开发这块的，  但仍然也有api工厂的使用， 所以是两者的结合。**
 
