@@ -2,37 +2,45 @@ const WXAPI = require('apifm-wxapi')
 const AUTH = require('../../utils/auth')
 
 const app = getApp()
+
+// 初始化 cloud
+wx.cloud.init();
+//1、引用数据库
+const db = wx.cloud.database({
+  //这个是环境ID,不是环境名称
+  env: 'serve-kto209'
+})
+
 Page({
   data: {
     addressList: []
   },
 
-  selectTap: function(e) {
+  selectTap: function (e) {
     var id = e.currentTarget.dataset.id;
     WXAPI.updateAddress({
       token: wx.getStorageSync('token'),
       id: id,
       isDefault: 'true'
-    }).then(function(res) {
+    }).then(function (res) {
       wx.navigateBack({})
     })
   },
 
-  addAddess: function() {
+  addAddess: function () {
     wx.navigateTo({
       url: "/pages/address-add/index"
     })
   },
 
-  editAddess: function(e) {
+  editAddess: function (e) {
     wx.navigateTo({
       url: "/pages/address-add/index?id=" + e.currentTarget.dataset.id
     })
   },
 
-  onLoad: function() {
-  },
-  onShow: function() {
+  onLoad: function () {},
+  onShow: function () {
     AUTH.checkHasLogined().then(isLogined => {
       if (isLogined) {
         this.initShippingAddress();
@@ -45,7 +53,7 @@ Page({
           success(res) {
             if (res.confirm) {
               wx.switchTab({
-                url: "/pages/my/index"
+                url: "/pages/user/index"
               })
             } else {
               wx.navigateBack()
@@ -55,19 +63,16 @@ Page({
       }
     })
   },
-  initShippingAddress: function() {
+  initShippingAddress: function () {
     var that = this;
-    WXAPI.queryAddress(wx.getStorageSync('token')).then(function(res) {
-      console.log(res, '<-resDa->');
-      if (res.code == 0) {
+
+    db.collection('addressList').get({
+      //如果查询成功的话
+      success(res) {
         that.setData({
-          addressList: res.data
-        });
-      } else if (res.code == 700) {
-        that.setData({
-          addressList: null
-        });
-      }
+          addressList: res.data || [],
+        })
+      },
     })
   }
 

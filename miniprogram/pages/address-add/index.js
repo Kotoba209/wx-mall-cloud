@@ -2,16 +2,58 @@ const WXAPI = require('apifm-wxapi')
 const AUTH = require('../../utils/auth')
 //获取应用实例
 var app = getApp()
+
+// 初始化 cloud
+wx.cloud.init();
+//1、引用数据库
+const db = wx.cloud.database({
+  //这个是环境ID,不是环境名称
+  env: 'serve-kto209'
+})
+
 Page({
   data: {
-    showRegionStr: '请选择'
+    showRegionStr: '请选择',
+    addressData: {},
   },
+
+  onShow() {
+    let pages = getCurrentPages();
+    let currentPage = pages[pages.length - 1];
+    let options = currentPage.options;
+    const {
+      id
+    } = options;
+    this.queryAddress(id);
+  },
+
+
+  async queryAddress(id) {
+    const that = this;
+    if (id) {
+      await db.collection('addressList').where({
+          _id: id
+        })
+        .get({
+          success: function (res) {
+            // res.data 是包含以上定义的两条记录的数组
+            that.setData({
+              addressData: res.data[0] || [],
+            })
+          }
+        })
+    }
+  },
+
+
+
   async bindSave(e) {
+    // const openid = wx.getStorageSync('openid');
     var that = this;
     var linkMan = e.detail.value.linkMan;
     var address = e.detail.value.address;
     var mobile = e.detail.value.mobile;
-    const code = '322000';
+    // const code = '322000';
     if (linkMan == "") {
       wx.showModal({
         title: '提示',
@@ -49,8 +91,8 @@ Page({
       linkMan: linkMan,
       address: address,
       mobile: mobile,
-      code: code,
-      isDefault: 'true',
+      // code: code,
+      isDefault: 'false',
     }
     if (this.data.pObject) {
       postData.provinceId = this.data.pObject.id
@@ -70,39 +112,84 @@ Page({
       extJsonStr['街道/社区'] = _address
       postData.extJsonStr = JSON.stringify(extJsonStr)
     }
-    let apiResult
-    if (that.data.id) {
-      postData.id = this.data.id
-      apiResult = await WXAPI.updateAddress(postData)
-    } else {
-      apiResult = await WXAPI.addAddress(postData)
-    }
-    if (apiResult.code != 0) {
-      // 登录错误 
-      wx.hideLoading();
-      wx.showToast({
-        title: apiResult.msg,
-        icon: 'none'
+    // let apiResult
+    if (that.data.addressData._id) {
+      const id = that.data.addressData._id
+
+      db.collection('addressList').doc(id).update({
+        data: postData,
+        success: function () {
+          wx.showToast({
+            title: '修改成功',
+            icon: 'success',
+            duration: 1500,
+            mask: false,
+            success: () => {
+              wx.hideLoading();
+              wx.navigateBack();
+            }
+          });
+        }
       })
-      return;
+      // 请求云函数, 对应的云函数实现在 cloudfunctions 目录下
+      // wx.cloud.callFunction({
+      //   name: 'updateAddress',
+      //   data: {
+      //     ...postData
+      //   },
+      //   success: function (res) {
+      //     wx.showToast({
+      //       title: '修改成功',
+      //       icon: 'success',
+      //       duration: 1500,
+      //       mask: false,
+      //       success: () => {
+      //         wx.hideLoading();
+      //         wx.navigateBack();
+      //       }
+      //     });
+      //   },
+      //   fail: console.error
+      // })
     } else {
-      wx.navigateBack()
+      // apiResult = await WXAPI.addAddress(postData)
+      apiResult = db.collection('addressList').add({
+          // data 字段表示需新增的 JSON 数据
+          data: postData
+        })
+        .then(res => {
+          console.log(res)
+        }).finally(() => {
+          wx.hideLoading();
+          wx.navigateBack();
+        })
     }
   },
   onLoad: function (e) {
-    const _this = this
+    // const _this = this
   },
   deleteAddress: function (e) {
-    // TODO 未完成
     var that = this;
     var id = e.currentTarget.dataset.id;
+    console.log(id, '<-id->');
+    console.log(e.currentTarget, '<-e.currentTarget->');
     wx.showModal({
       title: '提示',
       content: '确定要删除该收货地址吗？',
       success: function (res) {
         if (res.confirm) {
-          WXAPI.deleteAddress(wx.getStorageSync('token'), id).then(function () {
-            wx.navigateBack({})
+          db.collection('addressList').doc(id).remove({
+            success: function (res) {
+              wx.showToast({
+                title: '删除成功',
+                icon: 'success',
+                duration: 1500,
+                mask: false,
+                complete: () => {
+                  wx.navigateBack({})
+                }
+              });
+            }
           })
         } else {
           console.log('用户点击取消')

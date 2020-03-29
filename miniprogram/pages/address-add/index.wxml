@@ -28,7 +28,7 @@
       </view>
     </view>
     <button type="warn" class="save-btn" formType="submit">保存</button>
-    <button type="default" class="save-btn" bindtap="deleteAddress" data-id="{{addressData.id}}" wx:if="{{addressData}}">
+    <button type="default" class="save-btn" bindtap="deleteAddress" data-id="{{addressData._id}}" wx:if="{{addressData && addressData._id}}">
       删除该地址
     </button>
   </form>

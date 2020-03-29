@@ -36,6 +36,7 @@ async function login(page) {
         }
         wx.setStorageSync('token', res.data.token)
         wx.setStorageSync('uid', res.data.uid)
+        wx.setStorageSync('openid', res.data.openid)
         if (page) {
           onShow()
         }
