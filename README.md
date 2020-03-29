@@ -16,15 +16,17 @@
 
 
 
-![在这里插入图片描述](https://img-blog.csdnimg.cn/20200329141308641.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0tvdG9iYTIwOV8=,size_16,color_FFFFFF,t_70)
-
-
-
  **- 编辑地址：**
 
 
 
 doc( )方法真香， 不用自己去写云函数了， where查询直接修改不了集合里面得数据， 还需要自己写一个云函数来修改， 有些麻烦， 我代码里也写了， 有兴趣可以看看， 但是doc查询就不需要了， 直接查询然后修改就好
+
+
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200329141308641.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0tvdG9iYTIwOV8=,size_16,color_FFFFFF,t_70)
+
+
 
  **- 新增地址**
 
