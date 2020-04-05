@@ -1,7 +1,7 @@
 <view class="container">
   <view class="address-list">
     <view class="a-address" wx:for-items="{{addressList}}" wx:key="{{index}}">
-      <view class="left-text {{item.isDefault? 'active':''}}" bindtap="selectTap" data-id="{{item._id}}">
+      <view class="left-text {{item.isDefault === true ? 'active':''}}" bindtap="selectTap" data-id="{{item._id}}">
         <view class="name-tel">{{item.linkMan}}  {{item.mobile}}</view>
         <view class="address-box">{{item.address}}</view>
       </view>
@@ -12,4 +12,4 @@
     <view class="add-btn" bindtap="addAddess">新增收货地址</view>
   </view>
 </view>
-<float-menu />
+<!-- <float-menu /> -->

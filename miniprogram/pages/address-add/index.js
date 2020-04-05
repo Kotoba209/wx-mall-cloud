@@ -30,6 +30,7 @@ Page({
 
   async queryAddress(id) {
     const that = this;
+    // 判断有无id， 有id则是走的编辑接口
     if (id) {
       await db.collection('addressList').where({
           _id: id
@@ -92,7 +93,7 @@ Page({
       address: address,
       mobile: mobile,
       // code: code,
-      isDefault: 'false',
+      isDefault: false,
     }
     if (this.data.pObject) {
       postData.provinceId = this.data.pObject.id
@@ -153,7 +154,7 @@ Page({
       // })
     } else {
       // apiResult = await WXAPI.addAddress(postData)
-      apiResult = db.collection('addressList').add({
+      db.collection('addressList').add({
           // data 字段表示需新增的 JSON 数据
           data: postData
         })

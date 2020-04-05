@@ -9,9 +9,9 @@ Page({
   },
   onShow() {
     const userinfo = wx.getStorageSync("userinfo");
-    console.log(userinfo, '<-userinfo->');
+    const token = wx.getStorageSync("token") || '';
     const collect = wx.getStorageSync("collect") || [];
-    if (!userinfo) {
+    if (!userinfo && !token) {
       this.setData({
         wxlogin: false,
         userinfo: {},

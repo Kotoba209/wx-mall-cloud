@@ -16,14 +16,37 @@ Page({
     addressList: []
   },
 
-  selectTap: function (e) {
+  async selectTap(e) {
     var id = e.currentTarget.dataset.id;
-    WXAPI.updateAddress({
-      token: wx.getStorageSync('token'),
-      id: id,
-      isDefault: 'true'
-    }).then(function (res) {
-      wx.navigateBack({})
+
+    // 请求云函数, 对应的云函数实现在 cloudfunctions 目录下
+    await wx.cloud.callFunction({
+      name: 'selectAddress', // 调用云函数
+      data: {
+        id,
+      }, // 传id参数
+      success: this.setDefault(id),
+      fail: console.error
+    })
+  },
+
+  setDefault(id) {
+    // doc 查到对应地址数据然后把当前地址数据的isDefault设为true
+    db.collection('addressList').doc(id).update({
+      data: {
+        isDefault: true
+      },
+      success: function () {
+        wx.showToast({
+          title: '修改成功',
+          icon: 'success',
+          duration: 1500,
+          mask: false,
+          success: () => {
+            wx.navigateBack();
+          }
+        });
+      }
     })
   },
 
@@ -64,7 +87,7 @@ Page({
     })
   },
   initShippingAddress: function () {
-    var that = this;
+    const that = this;
 
     db.collection('addressList').get({
       //如果查询成功的话

@@ -46,4 +46,4 @@
   </view>
   <view class="safeAreaOldMarginBttom safeAreaNewMarginBttom"></view>
 </view>
-<float-menu />
+<!-- <float-menu /> -->

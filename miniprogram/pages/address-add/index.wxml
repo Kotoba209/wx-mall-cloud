@@ -33,5 +33,5 @@
     </button>
   </form>
 </view>
-<float-menu />
+<!-- <float-menu /> -->
 <region-picker wx:if="{{ showRegionSelect }}" bind:closeAddress="closeAddress" bind:selectAddress="selectAddress" />

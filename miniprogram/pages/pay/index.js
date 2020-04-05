@@ -2,6 +2,14 @@
 import regeneratorRuntime from '../../lib/runtime/runtime';
 const WXAPI = require('apifm-wxapi');
 const AUTH = require('../../utils/auth')
+
+// 初始化 cloud
+wx.cloud.init();
+//1、引用数据库
+const db = wx.cloud.database({
+  //这个是环境ID,不是环境名称
+  env: 'serve-kto209'
+})
 Page({
 
   /**
@@ -145,17 +153,30 @@ Page({
   },
 
   async initShippingAddress() {
-    const res = await WXAPI.defaultAddress(wx.getStorageSync("token"))
-    if (res.code == 0) {
-      console.log(res, '<-resaaa->');
-      this.setData({
-        curAddressData: res.data.info
-      });
-    } else {
-      this.setData({
-        curAddressData: null
-      });
-    }
+
+    const that = this;
+
+    db.collection('addressList').where({
+      isDefault: true
+    }).get({
+      success: function (res) {
+        that.setData({
+          curAddressData: res.data[0] || {}
+        })
+      }
+    })
+
+    // const res = await WXAPI.defaultAddress(wx.getStorageSync("token"))
+    // if (res.code == 0) {
+    //   console.log(res, '<-resaaa->');
+    //   this.setData({
+    //     curAddressData: res.data.info
+    //   });
+    // } else {
+    //   this.setData({
+    //     curAddressData: null
+    //   });
+    // }
   },
 
   addAddress: function () {

@@ -1,6 +1,121 @@
 > 前言： 关于云开发， 只是花了一个上午的时间 简单的看了基础的数据库使用， 想要完全的去学一遍， 不花点时间是很难说可以掌握的。所以关于云开发，这里并不会讲太多， 想了解可以去啃文档 [微信云开发](https://developers.weixin.qq.com/miniprogram/dev/wxcloud/basis/getting-started.html)
 >
-> 
+
+
+
+
+
+*2020.04.05更新*
+
+地址那块虽然已实现但是选择地址的时候没有处理好， 所以这次更新主要是处理选择默认地址的，因为这里涉及到了云函数的使用， 所以先简单的介绍一下。
+
+**云函数**
+云函数是一段运行在云端的代码，无需管理服务器，在开发工具内编写、一键上传部署即可运行后端代码。
+
+小程序内提供了专门用于云函数调用的 API。开发者可以在云函数内使用 **wx-server-sdk 提供的 getWXContext 方法**获取到每次调用的上下文（appid、openid 等），无需维护复杂的鉴权机制，即可获取天然可信任的用户登录态（openid）。**（注：上面中加粗的这段话， 如果有在文件中引入wx-server-sdk（生成的默认云函数模板里面有引入`const cloud = require('wx-server-sdk')`），就需要在终端npm install wx-server-sdk）**
+
+**云函数示例：**
+
+```javascript
+// index.js 是入口文件，云函数被调用时会执行该文件导出的 main 方法
+// event 包含了调用端（小程序端）调用该函数时传过来的参数，同时还包含了可以通过 getWXContext 方法获取的用户登录态 `openId` 和小程序 `appId` 信息
+const cloud = require('wx-server-sdk')
+exports.main = (event, context) => {
+  let { userInfo, a, b} = event
+  let { OPENID, APPID } = cloud.getWXContext() // 这里获取到的 openId 和 appId 是可信的
+  let sum = a + b
+
+  return {
+    OPENID,
+    APPID,
+    sum
+  }
+}
+```
+
+ **1. 云函数的创建**
+
+ 在微信开发者工具上右键`cloudfunctions`这个文件夹，这里我创建的云函数名为`selectAddress`
+
+
+
+ ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200405150403835.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0tvdG9iYTIwOV8=,size_16,color_FFFFFF,t_70)
+
+添加一些初始代码
+
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/2020040515054590.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0tvdG9iYTIwOV8=,size_16,color_FFFFFF,t_70)
+
+```javascript
+cloud.init({
+  env: 'serve-kto209'
+})
+
+const db = cloud.database() //云端不要加wx.这个是错误的：wx.cloud.database()
+const _ = db.command
+```
+
+ **2. 云函数的调用**
+
+在想要使用云函数的地方用以下写法来执行云函数，比如我这里是在选择地址的时候执行的云函数， 所以要在选择地址的点击事件里面来调用云函数
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200405151721435.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0tvdG9iYTIwOV8=,size_16,color_FFFFFF,t_70)
+
+**需要修改的地方：**
+
+ 1. 地址列表的.wxml文件（select-address）
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/2020040515225533.png)
+
+ 2. 地址列表的.js文件 （select-address）
+ 修改`selectTap`方法
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200405155222883.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0tvdG9iYTIwOV8=,size_16,color_FFFFFF,t_70)
+上面图片中云函数调用成功之后会执行succes成功回调函数， 所以会触发setDefault函数（setDefault是新增的方法）
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200405155729340.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0tvdG9iYTIwOV8=,size_16,color_FFFFFF,t_70)
+
+
+ 3. 添加地址的.js文件（address-add文件夹里面的index.js）
+找到postData对象
+
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200405152537871.png)
+
+ 4. 支付页面的.js文件（pay）
+ 
+ 替换掉请求默认地址的接口的方法`initShippingAddress`
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200405160633595.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0tvdG9iYTIwOV8=,size_16,color_FFFFFF,t_70)
+
+
+
+**需要注意的点：**
+云函数每次更新都需要重新上传部署， 且等到弹出上传成功的提示窗口才可以
+
+
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200405161310147.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0tvdG9iYTIwOV8=,size_16,color_FFFFFF,t_70)
+
+
+
+
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200405161346943.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0tvdG9iYTIwOV8=,size_16,color_FFFFFF,t_70)
+
+
+
+
+
+
+
+---
+
+
+
+
+
+
 
 ***2020.03.29更新***
 

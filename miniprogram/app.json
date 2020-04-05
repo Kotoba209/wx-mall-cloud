@@ -11,7 +11,8 @@
     "pages/address-add/index",
     "pages/select-address/index",
     "pages/im/im",
-    "pages/openapi/openapi"
+    "pages/openapi/openapi",
+    "pages/order/index"
   ],
   "window": {
     "backgroundTextStyle": "light",
