@@ -84,10 +84,54 @@ const _ = db.command
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200405152537871.png)
 
  4. 支付页面的.js文件（pay）
- 
+
  替换掉请求默认地址的接口的方法`initShippingAddress`
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20200405160633595.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0tvdG9iYTIwOV8=,size_16,color_FFFFFF,t_70)
+
+
+
+5. 新增一个云函数
+   
+
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200405191016748.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L0tvdG9iYTIwOV8=,size_16,color_FFFFFF,t_70)
+
+
+```javascript
+// 云函数入口文件
+const cloud = require('wx-server-sdk')
+
+cloud.init({
+  env: 'serve-kto209'
+})
+
+const db = cloud.database() //云端不要加wx.这个是错误的：wx.cloud.database()
+const _ = db.command
+
+// 云函数入口函数
+exports.main = async (event, context) => {
+  const wxContext = cloud.getWXContext()
+  const {
+    id
+  } = event
+
+  const address = db.collection('addressList').where({
+    _id: _.neq(id) // neq为不等于， 这里是找出id不等于当前id的所有地址数据
+  }).update({
+    data: {
+      isDefault: false
+    },
+    success(res) {
+      console.log('更新成功', res)
+    },
+    fail: err => {
+      console.log('失败')
+    }
+  })
+
+  return address;
+}
+```
 
 
 
